@@ -1,0 +1,364 @@
+{
+	"info": {
+		"_postman_id": "6b0ee841-0569-44cf-be35-40a3748efbd0",
+		"name": "Seinfeld Quotes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API methods",
+			"item": [
+				{
+					"name": "GET all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:5000/api/quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"quotes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:5000/api/quotes/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"quotes",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Tuesday has no feel. Monday has a feel, Friday has a feel, Sunday has a feel...\",\n  \"character\": \"Newman\",\n  \"season\": 5,\n  \"episode\": 4\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"quotes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://localhost:5000/api/quotes/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"quotes",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test Collection",
+			"item": [
+				{
+					"name": "Get a list of all Quotes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "193b33d5-e24d-4641-90f1-a72f793ccebe",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response must be valid and have a body\", function () {",
+									"     pm.response.to.be.ok;",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json;",
+									"});",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Response contains the expected keys\", function () {",
+									"    pm.expect(data[0]).to.include.all.keys(\"id\",\"text\",\"character\",\"season\",\"episode\");",
+									"});",
+									"",
+									"pm.test(\"No duplicate quotes exist\", function () {",
+									"    var quoteArray = data.map(function(quotes){ return quotes.text; });",
+									"    var containsDuplicates = quoteArray.some(function(quotes, idx){",
+									"\t\treturn quoteArray.indexOf(quotes) != idx;",
+									"\t});",
+									"\tpm.expect(containsDuplicates).to.be.false;",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{URL}}/quotes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"quotes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9b8657e6-be07-4d30-966c-0c2e6c78eb9f",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+									"});",
+									"",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"",
+									"pm.globals.set(\"quoteId\", data.id);",
+									"",
+									"pm.test(\"Response contains the expected keys\", function () {",
+									"    pm.expect(data).to.include.all.keys(\"id\",\"text\",\"character\",\"season\",\"episode\");",
+									"});",
+									"",
+									"pm.test(\"Location and Content-Type headers are present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.response.to.have.header(\"Location\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Tuesday has no feel. Monday has a feel, Friday has a feel, Sunday has a feel...\",\n  \"character\": \"Newman\",\n  \"season\": 5,\n  \"episode\": 4\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/quotes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"quotes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify the Quote was created",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "62ec5b94-069a-4e1d-98e0-fdae8642852c",
+								"type": "text/javascript",
+								"exec": [
+									"var data = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response must be valid and have a body\", function () {",
+									"     pm.response.to.be.ok;",
+									"     pm.response.to.be.withBody;",
+									"     pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"Response contains the expected keys\", function () {",
+									"    pm.expect(data).to.include.all.keys(\"id\",\"text\",\"character\",\"season\",\"episode\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{URL}}/quotes/{{quoteId}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"quotes",
+								"{{quoteId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete the Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "05f3e12e-7368-4b75-98bc-2e749e72ad60",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{URL}}/quotes/{{quoteId}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"quotes",
+								"{{quoteId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify the Quote was deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "94aede3f-2e4e-4826-b035-9c45445d895f",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"    pm.response.to.be.error;",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{URL}}/quotes/{{quoteId}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"quotes",
+								"{{quoteId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "23fdb1f0-fc51-4ace-a99f-25f466943d5e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3becd5e2-3007-497c-9af5-4bf3478cc230",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}
